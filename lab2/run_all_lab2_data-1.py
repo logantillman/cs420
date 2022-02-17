@@ -11,5 +11,5 @@ for n in N:
         for pc in p_c:
             for ts in trn_size:
                 for i in range(20):
-                    command = "python lab2.py --n " + str(n) + " --p_m " + str(pm) + " --p_c " + str(pc) + " --trn_size " + str(ts) + " --csv_output lab2_data/results_" +str(n) + "_" + str(pm) + "_" + str(pc) + "_" + str(ts) + "_" + str(i) + ".csv"
+                    command = "python3 lab2.py --n " + str(n) + " --p_m " + str(pm) + " --p_c " + str(pc) + " --trn_size " + str(ts) + " --csv_output lab2_data/results_" +str(n) + "_" + str(pm) + "_" + str(pc) + "_" + str(ts) + "_" + str(i) + ".csv"
                     os.system(command)
