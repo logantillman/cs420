@@ -164,7 +164,7 @@ if __name__ == '__main__':
     # TODO: You may want to change how you save the best network
     print("Best network weights:") 
     print(best_net.genome)
-    with open('bestGenome_20.txt', 'w') as f:
+    with open('bestGenome_{}.txt'.format(args.hidden), 'w') as f:
         for weight in best_net.genome:
             f.write("%s\n" % weight)
     f.close()
