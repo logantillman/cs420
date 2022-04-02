@@ -123,22 +123,23 @@ if __name__ == '__main__':
     max_generation = 50
     N = 100
 
-    hiddenOptions = [10, 20, 30, 40, 50]
+    num_hidden = 50
     num_inputs = 8
     num_actions = 4
     environment = "LunarLander-v2"
+    trnOptions = [2, 10, 20]
     
-    for num_hidden in hiddenOptions:
+    for trn_size in trnOptions:
         layers = [num_inputs, num_hidden, num_actions]
         problem = OpenAIGymProblem(layers, environment)
         genome = []
-        for i in range(10):
-            f = open("{}_bestGenome_{}.txt".format(num_hidden, i), "r")
+        for i in range(5):
+            f = open("{}_ECbestGenome_{}.txt".format(trn_size, i), "r")
             for line in f:
                 genome.append(float(line))
             f.close()
 
             averageFitness = problem.evaluate(genome)
-            f = open('testAvgFitness_{}.txt'.format(num_hidden), 'a')
+            f = open('ECtestAvgFitness_{}.txt'.format(trn_size), 'a')
             f.write("%s\n" % str(averageFitness))
             f.close()

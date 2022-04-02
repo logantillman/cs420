@@ -108,6 +108,8 @@ class OpenAIGymProblem(ScalarProblem):
             return np.average(scores) 
         except IndexError as ie:
             print(ie)
+        except TypeError as te:
+            print(te)
         except:
             print('ERROR', sys.exc_info()[0])
 
@@ -149,7 +151,7 @@ if __name__ == '__main__':
             # Loop over generations
             for current_generation in range(max_generation):
                 offspring = pipe(parents,
-                            ops.tournament_selection(k=args.trn_size),
+                            ops.tournament_selection(k=int(args.trn_size)),
                             ops.clone,
                             mutate_gaussian(std=0.05, hard_bounds=(-1, 1), expected_num_mutations=int(0.01*total_weights)),
                             ops.uniform_crossover,
