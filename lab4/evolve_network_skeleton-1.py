@@ -126,45 +126,56 @@ if __name__ == '__main__':
     num_actions = args.outputs
     num_hidden = args.hidden
     layers = [num_inputs, num_hidden, num_actions]
+    maxFitness = None
     
     # Calculate the total length of the genome
     total_weights = 0
     for i in range(len(layers)-1):
         total_weights += layers[i]*layers[i+1]
 
-    # Spin up Dask for distributed evaluation
-    with Client() as client:
-   
-        # Set up the parents 
-        parents = DistributedIndividual.create_population(N,
-                                           initialize=create_real_vector(bounds=([[-1, 1]]*total_weights)),
-                                           decoder=IdentityDecoder(),
-                                           problem=OpenAIGymProblem(layers, args.environment))
-
-        # Calculate initial fitness values for the parents
-        parents = synchronous.eval_population(parents, client=client)
-
-        # Loop over generations
-        for current_generation in range(max_generation):
-            offspring = pipe(parents,
-                         ops.tournament_selection(k=5),
-                         ops.clone,
-                           mutate_gaussian(std=0.05, hard_bounds=(-1, 1), expected_num_mutations=int(0.01*total_weights)),
-                         ops.uniform_crossover,
-                         synchronous.eval_pool(client=client, size=len(parents)))
-
-            fitnesses = [net.fitness for net in offspring]
-            print("Generation ", current_generation, "Max Fitness ", max(fitnesses))
-            parents = offspring
-
-    # Find the best network in the final population
-    index = np.argmax(fitnesses)
-    best_net = parents[index]
+    for i in range(5):
+        # Spin up Dask for distributed evaluation
+        with Client() as client:
     
-    # TODO: You may want to change how you save the best network
-    print("Best network weights:") 
-    print(best_net.genome)
-    with open('bestGenome_{}.txt'.format(args.hidden), 'w') as f:
-        for weight in best_net.genome:
-            f.write("%s\n" % weight)
-    f.close()
+            # Set up the parents 
+            parents = DistributedIndividual.create_population(N,
+                                            initialize=create_real_vector(bounds=([[-1, 1]]*total_weights)),
+                                            decoder=IdentityDecoder(),
+                                            problem=OpenAIGymProblem(layers, args.environment))
+
+            # Calculate initial fitness values for the parents
+            parents = synchronous.eval_population(parents, client=client)
+
+            # Loop over generations
+            for current_generation in range(max_generation):
+                offspring = pipe(parents,
+                            ops.tournament_selection(k=args.trn_size),
+                            ops.clone,
+                            mutate_gaussian(std=0.05, hard_bounds=(-1, 1), expected_num_mutations=int(0.01*total_weights)),
+                            ops.uniform_crossover,
+                            synchronous.eval_pool(client=client, size=len(parents)))
+
+                fitnesses = [net.fitness for net in offspring]
+                print("Generation ", current_generation, "Max Fitness ", max(fitnesses))
+                if current_generation == (max_generation-1):
+                    maxFitness = max(fitnesses)
+                parents = offspring
+
+        # Find the best network in the final population
+        index = np.argmax(fitnesses)
+        best_net = parents[index]
+        
+        # TODO: You may want to change how you save the best network
+        print("Best network weights:") 
+        print(best_net.genome)
+        if maxFitness != None:
+            print("Max Fitness:", maxFitness)
+
+        with open('{}_ECbestGenome_{}.txt'.format(args.trn_size, i), 'w') as f:
+            for weight in best_net.genome:
+                f.write("%s\n" % weight)
+        f.close()
+
+        with open('ECmaxFitness_{}.txt'.format(args.trn_size), 'a') as f:
+            f.write("%s\n" % maxFitness)
+        f.close()
