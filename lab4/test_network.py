@@ -113,24 +113,25 @@ class OpenAIGymProblem(ScalarProblem):
             print('ERROR', sys.exc_info()[0])
 
 if __name__ == '__main__':
-    num_hidden = 50
-    num_inputs = 8
-    num_actions = 4
-    environment = "LunarLander-v2"
-    trnOptions = [2, 10, 20]
+    parser = argparse.ArgumentParser(description="CS 420/CS 527: Neuroevolution")
+    parser.add_argument("--environment", type=str, help="OpenAI Gym Environmetn")
+    parser.add_argument("--inputs", type=int, help="Number of inputs")
+    parser.add_argument("--outputs", type=int, help="Number of outputs")
+    args = parser.parse_args() 
+
+    hiddenOptions = [10, 20, 30, 40, 50]
     
-    # Fixed for extra credit testing
-    for trn_size in trnOptions:
-        layers = [num_inputs, num_hidden, num_actions]
-        problem = OpenAIGymProblem(layers, environment)
+    for num_hidden in hiddenOptions:
+        layers = [args.inputs, num_hidden, args.outputs]
+        problem = OpenAIGymProblem(layers, args.environment)
         genome = []
-        for i in range(5):
-            f = open("{}_ECbestGenome_{}.txt".format(trn_size, i), "r")
+        for i in range(10):
+            f = open("{}_bestGenome_{}.txt".format(num_hidden, i), "r")
             for line in f:
                 genome.append(float(line))
             f.close()
 
             averageFitness = problem.evaluate(genome)
-            f = open('ECtestAvgFitness_{}.txt'.format(trn_size), 'a')
+            f = open('testAvgFitness_{}.txt'.format(num_hidden), 'a')
             f.write("%s\n" % str(averageFitness))
             f.close()
