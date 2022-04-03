@@ -1,24 +1,14 @@
-# CS 420/CS 527 Lab 4: Neuroevolution with LEAP
-# Catherine Schuman
-# March 2022
-import os
+# Logan Tillman
+# Ltillma4
+
+# To run this program, use the following command:
+# python3 test_network.py --environment <environment name> --inputs <num inputs> --outputs <num outputs>
+
 import sys
-from xxlimited import Str
 import gym
-import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-from toolz import pipe
-from leap_ec import Individual, Representation, test_env_var
-from leap_ec import probe, ops, util
-from leap_ec.algorithm import generational_ea
-from leap_ec.real_rep.initializers import create_real_vector
-from leap_ec.real_rep.ops import mutate_gaussian
 from leap_ec.binary_rep.problems import ScalarProblem
-from leap_ec.decoder import IdentityDecoder
-from distributed import Client
-from leap_ec.distrib import DistributedIndividual
-from leap_ec.distrib import synchronous
 
 class Network:
     # The network constructor takes as input an array where
@@ -113,7 +103,7 @@ class OpenAIGymProblem(ScalarProblem):
             print('ERROR', sys.exc_info()[0])
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="CS 420/CS 527: Neuroevolution")
+    parser = argparse.ArgumentParser(description="CS 420/CS 527: Neuroevolution Testing")
     parser.add_argument("--environment", type=str, help="OpenAI Gym Environmetn")
     parser.add_argument("--inputs", type=int, help="Number of inputs")
     parser.add_argument("--outputs", type=int, help="Number of outputs")
@@ -126,12 +116,12 @@ if __name__ == '__main__':
         problem = OpenAIGymProblem(layers, args.environment)
         genome = []
         for i in range(10):
-            f = open("{}_bestGenome_{}.txt".format(num_hidden, i), "r")
+            f = open("data/{}_bestGenome_{}.txt".format(num_hidden, i), "r")
             for line in f:
                 genome.append(float(line))
             f.close()
 
             averageFitness = problem.evaluate(genome)
-            f = open('testAvgFitness_{}.txt'.format(num_hidden), 'a')
+            f = open('data/testAvgFitness_{}.txt'.format(num_hidden), 'a')
             f.write("%s\n" % str(averageFitness))
             f.close()
