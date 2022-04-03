@@ -113,22 +113,13 @@ class OpenAIGymProblem(ScalarProblem):
             print('ERROR', sys.exc_info()[0])
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser(description="CS 420/CS 527: Neuroevolution")
-    # parser.add_argument("--environment", type=str, help="OpenAI Gym Environmetn")
-    # parser.add_argument("--inputs", type=int, help="Number of inputs")
-    # parser.add_argument("--hidden", type=int, help="Number of hidden")
-    # parser.add_argument("--outputs", type=int, help="Number of outputs")
-    # parser.add_argument("--trn_size", type=int, default=5, help="Tournament size")
-    # args = parser.parse_args() 
-    max_generation = 50
-    N = 100
-
     num_hidden = 50
     num_inputs = 8
     num_actions = 4
     environment = "LunarLander-v2"
     trnOptions = [2, 10, 20]
     
+    # Fixed for extra credit testing
     for trn_size in trnOptions:
         layers = [num_inputs, num_hidden, num_actions]
         problem = OpenAIGymProblem(layers, environment)
