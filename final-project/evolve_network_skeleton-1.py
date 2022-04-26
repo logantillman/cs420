@@ -1,6 +1,3 @@
-# CS 420/CS 527 Lab 4: Neuroevolution with LEAP
-# Catherine Schuman
-# March 2022
 import os
 import sys
 import gym
@@ -117,9 +114,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="CS 420/CS 527: Neuroevolution")
     parser.add_argument("--environment", type=str, help="OpenAI Gym Environmetn")
     parser.add_argument("--inputs", type=int, help="Number of inputs")
-    parser.add_argument("--hidden", type=int, help="Number of hidden")
+    parser.add_argument("--hidden", type=int, default=50, help="Number of hidden")
     parser.add_argument("--outputs", type=int, help="Number of outputs")
-    parser.add_argument("--trn_size", type=int, default=5, help="Tournament size")
+    parser.add_argument("--trn_size", type=int, default=10, help="Tournament size")
     args = parser.parse_args() 
     max_generation = 50
     N = 100
@@ -135,7 +132,7 @@ if __name__ == '__main__':
     for i in range(len(layers)-1):
         total_weights += layers[i]*layers[i+1]
 
-    for i in range(5):
+    for i in range(10):
         # Spin up Dask for distributed evaluation
         with Client() as client:
     
@@ -173,11 +170,11 @@ if __name__ == '__main__':
         if maxFitness != None:
             print("Max Fitness:", maxFitness)
 
-        with open('{}_ECbestGenome_{}.txt'.format(args.trn_size, i), 'w') as f:
+        with open('TRN_bestGenome_{}.txt'.format(i), 'w') as f:
             for weight in best_net.genome:
                 f.write("%s\n" % weight)
         f.close()
 
-        with open('ECmaxFitness_{}.txt'.format(args.trn_size), 'a') as f:
+        with open('TRNmaxFitness.txt', 'a') as f:
             f.write("%s\n" % maxFitness)
         f.close()
