@@ -148,11 +148,12 @@ if __name__ == '__main__':
             # Loop over generations
             for current_generation in range(max_generation):
                 offspring = pipe(parents,
-                            ops.tournament_selection(k=int(args.trn_size)),
+                            ops.tournament_selection,
                             ops.clone,
                             mutate_gaussian(std=0.05, hard_bounds=(-1, 1), expected_num_mutations=int(0.01*total_weights)),
                             ops.uniform_crossover,
-                            synchronous.eval_pool(client=client, size=len(parents)))
+                            synchronous.eval_pool(client=client, size=len(parents)),
+                            ops.elitist_survival(parents=parents, k=20))
 
                 fitnesses = [net.fitness for net in offspring]
                 print("Generation ", current_generation, "Max Fitness ", max(fitnesses))
@@ -170,11 +171,11 @@ if __name__ == '__main__':
         if maxFitness != None:
             print("Max Fitness:", maxFitness)
 
-        with open('TRN_bestGenome_{}.txt'.format(i), 'w') as f:
+        with open('data/elite_bestGenome_{}.txt'.format(i), 'w') as f:
             for weight in best_net.genome:
                 f.write("%s\n" % weight)
         f.close()
 
-        with open('TRNmaxFitness.txt', 'a') as f:
+        with open('data/elite_train_maxFitness.txt', 'a') as f:
             f.write("%s\n" % maxFitness)
         f.close()

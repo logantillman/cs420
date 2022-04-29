@@ -109,19 +109,19 @@ if __name__ == '__main__':
     parser.add_argument("--outputs", type=int, help="Number of outputs")
     args = parser.parse_args() 
 
-    hiddenOptions = [10, 20, 30, 40, 50]
+    selectionTypes = ["cyc", "elite", "prop", "rand", "trn", "trunc"]
     
-    for num_hidden in hiddenOptions:
-        layers = [args.inputs, num_hidden, args.outputs]
+    for selType in selectionTypes:
+        layers = [args.inputs, 50, args.outputs]
         problem = OpenAIGymProblem(layers, args.environment)
         genome = []
         for i in range(10):
-            f = open("data/{}_bestGenome_{}.txt".format(num_hidden, i), "r")
+            f = open("data/{}_bestGenome_{}.txt".format(selType, i), "r")
             for line in f:
                 genome.append(float(line))
             f.close()
 
             averageFitness = problem.evaluate(genome)
-            f = open('data/testAvgFitness_{}.txt'.format(num_hidden), 'a')
+            f = open('test/{}_testAvgFitness.txt'.format(selType), 'a')
             f.write("%s\n" % str(averageFitness))
             f.close()
