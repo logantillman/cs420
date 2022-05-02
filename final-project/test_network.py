@@ -109,19 +109,30 @@ if __name__ == '__main__':
     parser.add_argument("--outputs", type=int, help="Number of outputs")
     args = parser.parse_args() 
 
-    selectionTypes = ["cyc", "elite", "prop", "rand", "trn", "trunc"]
+    selectionTypes = ["prop", "trn"]
     
     for selType in selectionTypes:
-        layers = [args.inputs, 50, args.outputs]
-        problem = OpenAIGymProblem(layers, args.environment)
-        genome = []
-        for i in range(10):
-            f = open("data/{}_bestGenome_{}.txt".format(selType, i), "r")
-            for line in f:
-                genome.append(float(line))
-            f.close()
+        numbers = []
+        if selType == "prop":
+            numbers.append(2)
+            numbers.append(3)
+            numbers.append(5)
+        else:
+            numbers.append(2)
+            numbers.append(5)
+            numbers.append(10)
 
-            averageFitness = problem.evaluate(genome)
-            f = open('test/{}_testAvgFitness.txt'.format(selType), 'a')
-            f.write("%s\n" % str(averageFitness))
-            f.close()
+        for number in numbers:
+            layers = [args.inputs, 50, args.outputs]
+            problem = OpenAIGymProblem(layers, args.environment)
+            genome = []
+            for i in range(10):
+                f = open("compare/{}{}_bestGenome_{}.txt".format(selType, number, i), "r")
+                for line in f:
+                    genome.append(float(line))
+                f.close()
+
+                averageFitness = problem.evaluate(genome)
+                f = open('test/{}{}_testAvgFitness.txt'.format(selType, number), 'a')
+                f.write("%s\n" % str(averageFitness))
+                f.close()
